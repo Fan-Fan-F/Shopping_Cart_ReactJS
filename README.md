@@ -68,3 +68,17 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+## Fork improvements
+
+Hardened the cart persistence layer (`src/context/ShoppingCartContext.js`):
+
+* **Crash-proof storage read** — the original parsed `localStorage` at module
+  scope with no error handling, so one corrupted payload crashed the whole app
+  on load. The new `loadCartItems()` tolerates corrupted JSON and unavailable
+  storage, and validates every entry before it reaches state.
+* **Crash-proof storage write** — `localStorage.setItem` is now wrapped so
+  quota errors or private-mode restrictions never break the in-memory cart.
+* **Lazy state initializer** — `useState(loadCartItems)` parses storage once
+  instead of running on every render.
